@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <style>
+            html {
+                width: 100%;
+                background: #000;
+                overflow: hidden;
+            }
+            body {
+                width: 100%;
+                transform: translateX(-2.5px);
+            }
+            img {
+                position: absolute;
+                user-select: none;
+            }
+        </style>
+    </head>
+    <body>
+        <img id="BODY" src="Body.png">
+        <img id="EYES" src="Eyes.png">
+        <script>
+            const BODY = document.getElementById("BODY");
+            const EYES = document.getElementById("EYES");
+            const heightScale = window.innerWidth / window.innerHeight;
+            
+            var mouseX = false, mouseY = false;
+            
+            document.addEventListener("mousemove", (e) => {    
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+            });
+            function update() {
+                var bobbingHeight = 60 * Math.sin(Math.PI * Date.now() / 5000);
+                let x = mouseX === false ? window.innerWidth  / 2 : mouseX;
+                let y = mouseY === false ? window.innerHeight / 2 : mouseY;
+                BODY.style['transform'] = `translate(${
+                    window.innerWidth  / 2 + (x - window.innerWidth  / 2) / 25 - BODY.offsetWidth  / 2 + "px"
+                }, ${
+                    window.innerHeight / 2 + heightScale * (y - window.innerHeight / 2) / 25 - BODY.offsetHeight / 2 + bobbingHeight + "px"
+                })`;
+
+                EYES.style['transform'] = `translate(${
+                    window.innerWidth  / 2 + (x - window.innerWidth  / 2) / 22 - BODY.offsetWidth  / 2 + "px"
+                }, ${
+                    window.innerHeight / 2 + heightScale * (y - window.innerHeight / 2) / 22 - BODY.offsetHeight / 2 + bobbingHeight + "px"
+                })`;
+            }
+            setInterval(update, 1.0 / 240.0);
+            
+            
+            function eyeLoop() {
+                setTimeout(function() {
+                    EYES.src = "EyesClosed.png";
+                    setTimeout(function() {
+                        EYES.src = "Eyes.png";
+                        eyeLoop();
+                    }, 1000 * (0.33 + 1 * Math.random()))
+                }, 10000 * (0.5 + 1.75 * Math.random()));
+            }
+            eyeLoop();
+            setTimeout(function() {
+                BODY.style['transform'] = `translate(${window.innerWidth  / 2 - BODY.offsetWidth  / 2 + "px"}, ${window.innerHeight / 2 - BODY.offsetHeight / 2 + "px"})`;
+                EYES.style['transform'] = `translate(${window.innerWidth  / 2 - EYES.offsetWidth  / 2 + "px"}, ${window.innerHeight / 2 - EYES.offsetHeight / 2 + "px"})`;
+            }, 100);
+            
+        </script>
+    </body>
+</html>
