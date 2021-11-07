@@ -23,15 +23,28 @@
             const BODY = document.getElementById("BODY");
             const EYES = document.getElementById("EYES");
             const heightScale = window.innerWidth / window.innerHeight;
+            const sleepyWaitTime = 1000 * 60 * 12;
             
+            var sleepyTime = false;
+            var sleepyTimeDate = Date.now() + sleepyWaitTime;
             var mouseX = false, mouseY = false;
             
             document.addEventListener("mousemove", (e) => {    
                 mouseX = e.pageX;
                 mouseY = e.pageY;
+                sleepyTimeDate = Date.now() + sleepyWaitTime;
+                if(sleepyTime) {
+                    EYES.src = "Eyes.png";
+                    sleepyTime = false;
+                }
             });
             function update() {
-                var bobbingHeight = 60 * Math.sin(Math.PI * Date.now() / 5000);
+                let curTime = Date.now();
+                if(curTime > sleepyTimeDate) {
+                    sleepyTime = true;
+                    EYES.src = "EyesClosed.png"
+                }
+                var bobbingHeight = 60 * Math.sin(Math.PI * curTime / 5000);
                 let x = mouseX === false ? window.innerWidth  / 2 : mouseX;
                 let y = mouseY === false ? window.innerHeight / 2 : mouseY;
                 BODY.style['transform'] = `translate(${
@@ -51,9 +64,13 @@
             
             function eyeLoop() {
                 setTimeout(function() {
-                    EYES.src = "EyesClosed.png";
+                    if(!sleepyTime) {
+                        EYES.src = "EyesClosed.png";
+                    }
                     setTimeout(function() {
-                        EYES.src = "Eyes.png";
+                        if(!sleepyTime) {
+                            EYES.src = "Eyes.png";
+                        }
                         eyeLoop();
                     }, 1000 * (0.33 + 1 * Math.random()))
                 }, 10000 * (0.5 + 1.75 * Math.random()));
